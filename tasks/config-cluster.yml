@@ -1,11 +1,17 @@
 ---
 # Configure RabbitMQ for cluster
 
+- name: gather rabbitmq hosts
+  set_fact:
+    rabbitmq_hosts_fact: "{{ rabbitmq_hosts_fact|default([]) + [{'host': hostvars[item]['ansible_hostname'], 'ip': hostvars[item]['ansible_default_ipv4']['address']}] }}"
+  when: rabbitmq_hosts is not defined or not rabbitmq_hosts
+  with_items: "{{ groups['rabbit'] }}"
+
 - name: ensure hostnames are in the host file
   lineinfile:
     dest: /etc/hosts
-    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_hostname'] }}"
-  with_items: "{{ groups['rabbit'] }}" 
+    line: "{{ item.ip }} {{ item.host }}"
+  with_items: "{{ rabbitmq_hosts_fact|default(rabbitmq_hosts) }}"
 
 - name: backup old erlang cookie
   shell: cp -a /var/lib/rabbitmq/.erlang.cookie /var/lib/rabbitmq/.erlang.cookie.old
