@@ -4,7 +4,7 @@
 
 - name: import repository key
   apt_key:
-    url: http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+    url: https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
     state: present
 
 - name: add apt repository
