@@ -2,11 +2,10 @@
 
 - include: repository.yml
   tags: repository
-  when: rabbitmq_use_repository
+  when: rabbitmq_use_repository|bool
 
 - include: packages.yml
   tags: packages
-  when: rabbitmq_use_repository
 
 - include: config-cluster.yml
   when: rabbitmq_create_cluster
